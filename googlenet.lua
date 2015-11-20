@@ -117,3 +117,5 @@ local function googlenet(lib)
 
    return model,'GoogleNet', {128,3,224,224}
 end
+
+return googlenet
