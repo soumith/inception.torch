@@ -3,7 +3,7 @@
 ```
 th
 
-dofile('googlenet.lua')
+googlenet = dofile('googlenet.lua')
 model = googlenet({cudnn.SpatialConvolution, cudnn.SpatialMaxPooling, cudnn.ReLU, 'BDHW', 'cudnn'})
 
 print(model)
