@@ -77,7 +77,7 @@ end
 local function googlenet(lib)
    local SpatialConvolution = lib[1]
    local SpatialMaxPooling = lib[2]
-   local SpatialAveragePooling = torch.type(lib[2]) == 'nn.SpatialMaxPooling' and nn.SpatialAveragePooling or cudnn.SpatialAveragePooling
+   local SpatialAveragePooling = torch.type(lib[2]()) == 'nn.SpatialMaxPooling' and nn.SpatialAveragePooling or cudnn.SpatialAveragePooling
    local ReLU = lib[3]
    local model = nn.Sequential()
    local m = SpatialConvolution(3,64,7,7,2,2,3,3)
