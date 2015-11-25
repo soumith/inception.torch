@@ -1,7 +1,6 @@
 hdf5 = require 'hdf5'
 require 'cudnn'
 require 'cunn'
-require 'inn'
 
 local function loadWeights(model, f)
    local function loadWeight(m)
@@ -79,19 +78,20 @@ local function googlenet(lib)
    local SpatialMaxPooling = lib[2]
    local SpatialAveragePooling = torch.type(lib[2]()) == 'nn.SpatialMaxPooling' and nn.SpatialAveragePooling or cudnn.SpatialAveragePooling
    local ReLU = lib[3]
+   local SpatialCrossMapLRN = lib[4]
    local model = nn.Sequential()
    local m = SpatialConvolution(3,64,7,7,2,2,3,3)
    m.gname = 'conv2d0'
    model:add(m):add(ReLU(true))
    model:add(SpatialMaxPooling(3,3,2,2,1,1))
-   inn.SpatialCrossResponseNormalization(11, 0.00109999999404, 0.5, 2.0)
+   model:add(SpatialCrossMapLRN(11, 0.00109999999404, 0.5, 2.0))
    local m = SpatialConvolution(64,64,1,1,1,1,0,0)
    m.gname = 'conv2d1'
    model:add(m):add(ReLU(true))
    local m = SpatialConvolution(64,192,3,3,1,1,1,1)
    m.gname = 'conv2d2'
    model:add(m):add(ReLU(true))
-   inn.SpatialCrossResponseNormalization(11, 0.00109999999404, 0.5, 2.0)
+   model:add(SpatialCrossMapLRN(11, 0.00109999999404, 0.5, 2.0))
    model:add(SpatialMaxPooling(3,3,2,2,1,1))
    model:add(inception(2, 192, {{ 64}, { 96,128}, {16, 32}, {3, 32}},lib, '3a')) -- 256
    model:add(inception(2, 256, {{128}, {128,192}, {32, 96}, {3, 64}},lib, '3b')) -- 480
@@ -111,7 +111,7 @@ local function googlenet(lib)
    m.gname = 'softmax2'
    model:add(m)
    model:add(nn.Narrow(2, 2, 1000)) -- because google has 1008 classes, class 2 - 1001 are valid
-   model:add(nn.LogSoftMax())
+   model:add(nn.SoftMax())
 
    loadWeights(model, 'dump/')
 
