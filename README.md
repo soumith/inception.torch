@@ -4,7 +4,7 @@
 th
 
 googlenet = dofile('googlenet.lua')
-model = googlenet({cudnn.SpatialConvolution, cudnn.SpatialMaxPooling, cudnn.ReLU, 'BDHW', 'cudnn'})
+model = googlenet({cudnn.SpatialConvolution, cudnn.SpatialMaxPooling, cudnn.ReLU, cudnn.SpatialCrossMapLRN})
 
 print(model)
 ```
