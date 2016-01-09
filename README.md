@@ -1,5 +1,7 @@
 # Inception.torch
 
+##Newer version here: https://github.com/Moodstocks/inception-v3.torch
+
 ```
 th
 
